@@ -6,6 +6,12 @@ const router = new express.Router();
 
 router.post("/signup", async (req, res) => {
 	const user = new User(req.body);
+	const foundUser = await User.findOne({email: req.body.email})
+	if ( foundUser ) {
+		console.log(foundUser)
+		return res.status(400).send(req.body.email)
+	}
+
 
 	try {
 		await user.save();

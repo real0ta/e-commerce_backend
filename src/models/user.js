@@ -12,6 +12,7 @@ const userSchema = new Schema({
 	email: {
 		type: String,
 		required: true,
+		unique: true,
 		trim: true,
 		validate(email) {
 			if (!validator.isEmail(email)) {
@@ -23,6 +24,7 @@ const userSchema = new Schema({
 		type: String,
 		required: true,
 		trim: true,
+		lowercase:true,
 		validate(pass) {
 			if (
 				!validator.isStrongPassword(pass, {
