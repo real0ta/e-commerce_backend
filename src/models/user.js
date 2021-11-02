@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const bycrpt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -22,31 +22,42 @@ const userSchema = new Schema({
 	},
 	password: {
 		type: String,
-		required: true,
 		trim: true,
-		lowercase:true,
-		validate(pass) {
-			if (
-				!validator.isStrongPassword(pass, {
-					minUppercase: 0,
-					minSymbols: 0,
-				})
-			) {
-				throw new Error("Password is not strong enought!");
+		required: true,
+		minLength: 7,
+		validate(value) {
+			if (value.toLowerCase().includes("password")) {
+				throw new Error("Your password is too common");
 			}
 		},
 	},
 });
-
-userSchema.pre("save", async function (req, res, next) {
-	const user = this;
-	try {
-		// const hash = bycript.hashSync(req.body.password , 8);
-		user.password = await bycrpt.hash(user.password, 8);
-		next();
-	} catch (e) {
-		next(e);
+userSchema.statics.findAndCompareUser = async (email, password) => {
+	try{
+	const user = await User.findOne({  email });
+	console.log(user);
+	if (!user) {
+		throw new Error("Unable to login!");
 	}
+	
+
+	const matched = await bcrypt.compare(password, user.password);
+	if (!matched) {
+		throw new Error("Unable to login!");
+	}
+	return user;
+
+	}catch(er){
+		console.log(er)
+	}
+};
+
+userSchema.pre("save", async function (next) {
+	const user = this;
+	if (user.isModified("password")) {
+		user.password = await bcrypt.hash(user.password, 8);
+	}
+	next();
 });
 
 const User = mongoose.model("User", userSchema);
