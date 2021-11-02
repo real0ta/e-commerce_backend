@@ -33,22 +33,19 @@ const userSchema = new Schema({
 	},
 });
 userSchema.statics.findAndCompareUser = async (email, password) => {
-	try{
-	const user = await User.findOne({  email });
-	console.log(user);
-	if (!user) {
-		throw new Error("Unable to login!");
-	}
-	
+	try {
+		const user = await User.findOne({ email });
+		if (!user) {
+			throw new Error("Unable to login!");
+		}
 
-	const matched = await bcrypt.compare(password, user.password);
-	if (!matched) {
-		throw new Error("Unable to login!");
-	}
-	return user;
-
-	}catch(er){
-		console.log(er)
+		const matched = await bcrypt.compare(password, user.password);
+		if (!matched) {
+			throw new Error("Unable to login!");
+		}
+		return user;
+	} catch (er) {
+		// return(er)
 	}
 };
 
