@@ -31,6 +31,12 @@ const userSchema = new Schema({
       }
     },
   },
+  tokens: [{
+    token: {
+      type: String,
+      required: true
+    }
+  }],
 });
 userSchema.statics.findAndCompareUser = async (email, password) => {
   try {
@@ -49,21 +55,21 @@ userSchema.statics.findAndCompareUser = async (email, password) => {
   }
 };
 
-userSchema.pre('save', async function (next) {
-    const user = this
+userSchema.pre('save', async function(next) {
+  const user = this
   try {
 
-  
+
     if (user.isModified('password')) {
       console.log('hello')
-        user.password = await bcrypt.hash(user.password, 8)
-      console.log(user.password)  
-  }
-    }catch(err) {
+      user.password = await bcrypt.hash(user.password, 8)
+      console.log(user.password)
+    }
+  } catch (err) {
     console.log(err)
   }
-    
-    next()
+
+  next()
 })
 
 const User = mongoose.model("User", userSchema);

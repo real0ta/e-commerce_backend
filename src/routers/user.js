@@ -1,4 +1,5 @@
 const express = require("express");
+const jwt = require('jsonwebtoken');
 const User = require("../models/user");
 
 const router = new express.Router();
@@ -15,7 +16,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
 router.post("/login", async (req, res) => {
   const user = await User.findAndCompareUser(
     req.body.email,
@@ -24,8 +24,11 @@ router.post("/login", async (req, res) => {
   if (!user) {
     return res.status(404).send();
   }
+
+  const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_KEY)
+  user.tokens = user.tokens.concat({token})
+  await user.save()
   res.status(201).send({ user });
 });
-
 
 module.exports = router;
