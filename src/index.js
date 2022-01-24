@@ -5,11 +5,7 @@ require("./db/mongoose");
 
 const app = express();
 const port = 3000;
-app.get("/registration", (req, res) => {
-  res.send("registration!");
-});
 app.use(express.json());
-
 
 app.use(bodyParser.json());
 app.use("/users", userRouter);

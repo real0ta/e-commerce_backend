@@ -3,5 +3,5 @@ const dotenv = require('dotenv');
 dotenv.config()
 mongoose.connect(process.env.MONGODB_URL)
   .then(() => console.log("connected"))
-  .catch(er => console.log(er))
+  .catch(er => console.log(`error: ${er} ` ))
 
