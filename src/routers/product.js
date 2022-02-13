@@ -23,9 +23,24 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Get product by id
+router.get("/:id", async (req, res) => {
+  const _id = req.params.id;
+  try {
+    const product = await Product.findOne(_id);
+
+    if (!product) {
+      res.status(404).send();
+    }
+    res.send(product);
+  } catch (err) {
+    res.status(500).send();
+  }
+});
+
 router.delete("/:id", auth, admin, (req, res) => {
   try {
-    const product = Product.findOneAndDelete({ _id: req.body.id });
+    const product = Product.findOneAndDelete({ _id: req.params.id });
     res.status(201).send();
   } catch (er) {
     res.status(400).send();

@@ -20,9 +20,6 @@ const ProductSchema = new Schema({
   },
 });
 
-try {
-} catch (err) {}
-
 const Product = mongoose.model("Product", ProductSchema);
 
 module.exports = Product;
