@@ -18,6 +18,10 @@ const ProductSchema = new Schema({
   quantity: {
     type: Number,
   },
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: "Category",
+  },
 });
 
 const Product = mongoose.model("Product", ProductSchema);

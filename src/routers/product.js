@@ -1,5 +1,6 @@
 const express = require("express");
 const Product = require("../models/product");
+const Category = require("../models/category");
 
 // Middlewares
 const auth = require("../middleware/auth");
@@ -8,9 +9,19 @@ const admin = require("../middleware/admin");
 const router = new express.Router();
 
 router.post("/create", auth, admin, async (req, res) => {
-  const product = new Product(req.body);
-  await product.save();
-  res.status(201).send({ product });
+  try {
+    const category = await Category.findOne({ name: req.body.category });
+    if (!category) res.status(500).send();
+
+    const product = new Product({
+      ...req.body,
+      category: category._id,
+    });
+    await product.save();
+    res.status(201).send({ product });
+  } catch (err) {
+    res.status(400).send(err);
+  }
 });
 
 // Get all products
@@ -38,10 +49,11 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", auth, admin, (req, res) => {
+router.delete("/:id", auth, admin, async (req, res) => {
   try {
-    const product = Product.findOneAndDelete({ _id: req.params.id });
-    res.status(201).send();
+    const product = await Product.findOneAndDelete({ _id: req.params.id });
+    if (!product) res.status(500).send();
+    res.status(201).send(product);
   } catch (er) {
     res.status(400).send();
   }
