@@ -1,4 +1,7 @@
 const express = require("express");
+const multer = require("multer");
+
+// Models
 const Product = require("../models/product");
 const Category = require("../models/category");
 
@@ -8,21 +11,41 @@ const admin = require("../middleware/admin");
 
 const router = new express.Router();
 
-router.post("/create", auth, admin, async (req, res) => {
-  try {
-    const category = await Category.findOne({ name: req.body.category });
-    if (!category) res.status(500).send();
+const upload = multer({
+  limits: {
+    fileSize: 1000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error("Please upload an image"));
+    }
 
-    const product = new Product({
-      ...req.body,
-      category: category._id,
-    });
-    await product.save();
-    res.status(201).send({ product });
-  } catch (err) {
-    res.status(400).send(err);
-  }
+    cb(undefined, true);
+  },
 });
+
+router.post(
+  "/create",
+  auth,
+  admin,
+  upload.single("photo"),
+  async (req, res) => {
+    try {
+      const category = await Category.findOne({ name: req.body.category });
+      if (!category) res.status(500).send();
+
+      const product = new Product({
+        ...req.body,
+        category: category._id,
+        photo: req.file.buffer,
+      });
+      await product.save();
+      res.status(201).send({ product });
+    } catch (err) {
+      res.status(400).send(err);
+    }
+  }
+);
 
 // Get all products
 router.get("/", async (req, res) => {
