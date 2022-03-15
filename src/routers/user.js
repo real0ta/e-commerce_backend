@@ -12,14 +12,14 @@ router.post("/register", async (req, res) => {
     await user.save();
     res.status(201).send({ user });
   } catch (e) {
-    res.status(402).send("error");
+    res.status(402).send("Registration failed");
   }
 });
 
 router.post("/login", async (req, res) => {
   const user = await User.findAndCompareUser(req.body.email, req.body.password);
   if (!user) {
-    return res.status(404).send();
+    return res.status(404).send("User not found");
   }
 
   const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_KEY);
@@ -41,7 +41,7 @@ router.post("/logout", auth, async (req, res) => {
   }
 });
 
-router.delete("/me", auth, async (req, res) => {
+router.delete("/delete", auth, async (req, res) => {
   try {
     await req.user.remove();
     res.send(req.user);
