@@ -5,7 +5,7 @@ const auth = require("../middleware/auth");
 
 const router = new express.Router();
 
-router.post("/register", async (req, res) => {
+router.post("/", async (req, res) => {
   const user = new User(req.body);
   console.log(user);
   try {
