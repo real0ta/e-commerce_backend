@@ -46,6 +46,26 @@ it("Should sign up new user", async () => {
     .expect(201);
 });
 
+it("Should not find user and sign in", async () => {
+  const res = await request(app)
+    .post("/users/login")
+    .send({
+      email: "userData.email",
+      password: userData.password,
+    })
+    .expect(404);
+});
+
+it("Should not sign in user", async () => {
+  const res = await request(app)
+    .post("/users/login")
+    .send({
+      email: userData.email,
+      password: "pass1111111111",
+    })
+    .expect(404);
+});
+
 it("Should sign in user", async () => {
   const res = await request(app)
     .post("/users/login")
@@ -56,7 +76,13 @@ it("Should sign in user", async () => {
     .expect(201);
 
   userData.tokens = res.body.user.tokens;
-  console.log(userData.tokens);
+});
+
+it("Should not sign out user", async () => {
+  const res = await request(app)
+    .post("/users/logout")
+    .set("auth-token", "userData.tokens[0].token")
+    .expect(403);
 });
 
 it("Should sign out user", async () => {
