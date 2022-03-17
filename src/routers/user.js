@@ -7,7 +7,6 @@ const router = new express.Router();
 
 router.post("/", async (req, res) => {
   const user = new User(req.body);
-  console.log(user);
   try {
     await user.save();
     res.status(201).send({ user });
@@ -35,7 +34,7 @@ router.post("/logout", auth, async (req, res) => {
     });
     await req.user.save();
 
-    res.send(req.user);
+    res.status(200).send(req.user);
   } catch (e) {
     res.status(500).send();
   }
@@ -44,7 +43,7 @@ router.post("/logout", auth, async (req, res) => {
 router.delete("/delete", auth, async (req, res) => {
   try {
     await req.user.remove();
-    res.send(req.user);
+    res.status(200).send(req.user);
   } catch (e) {
     res.status(500).send();
   }
