@@ -6,11 +6,12 @@ const admin = require("../middleware/admin");
 
 const router = new express.Router();
 
-router.post("/create", auth, admin, async (req, res) => {
+router.post("/", auth, admin, async (req, res) => {
   try {
     const category = new Category(req.body);
     await category.save();
-    res.status(201).send({ category });
+    console.log(category);
+    res.status(201).send({ category: category.name });
   } catch (err) {
     res.status(400).send({ err });
   }

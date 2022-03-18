@@ -54,7 +54,6 @@ it("Should not find user and sign in", async () => {
       password: userData.password,
     })
     .expect(404);
-  console.log(res.body);
 });
 
 it("Should not sign in user", async () => {
