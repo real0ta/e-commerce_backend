@@ -9,7 +9,7 @@ router.post("/", async (req, res) => {
   const user = new User(req.body);
   try {
     await user.save();
-    res.status(201).send({ user });
+    res.status(201).send();
   } catch (e) {
     res.status(402).send("Registration failed");
   }
@@ -24,7 +24,9 @@ router.post("/login", async (req, res) => {
   const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_KEY);
   user.tokens = user.tokens.concat({ token });
   await user.save();
-  res.status(201).send({ user });
+  res
+    .status(201)
+    .send({ username: user.username, email: user.email, token: token });
 });
 
 router.post("/logout", auth, async (req, res) => {
@@ -34,7 +36,9 @@ router.post("/logout", auth, async (req, res) => {
     });
     await req.user.save();
 
-    res.status(200).send(req.user);
+    res
+      .status(200)
+      .send({ username: req.user.username, email: req.user.email });
   } catch (e) {
     res.status(500).send();
   }
@@ -43,7 +47,9 @@ router.post("/logout", auth, async (req, res) => {
 router.delete("/delete", auth, async (req, res) => {
   try {
     await req.user.remove();
-    res.status(200).send(req.user);
+    res
+      .status(200)
+      .send({ username: req.user.username, email: req.user.email });
   } catch (e) {
     res.status(500).send();
   }

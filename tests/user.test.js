@@ -54,6 +54,7 @@ it("Should not find user and sign in", async () => {
       password: userData.password,
     })
     .expect(404);
+  console.log(res.body);
 });
 
 it("Should not sign in user", async () => {
@@ -75,21 +76,31 @@ it("Should sign in user", async () => {
     })
     .expect(201);
 
-  userData.tokens = res.body.user.tokens;
+  userData.token = res.body.token;
+  expect(res.body).toMatchObject({
+    username: userData.username,
+    email: userData.email,
+    token: userData.token,
+  });
 });
 
 it("Should not sign out user", async () => {
   const res = await request(app)
     .post("/users/logout")
-    .set("auth-token", "userData.tokens[0].token")
+    .set("auth-token", "userData..token")
     .expect(403);
 });
 
-it("Should sign out user", async () => {
+it("Should log out user", async () => {
   const res = await request(app)
     .post("/users/logout")
-    .set("auth-token", userData.tokens[0].token)
+    .set("auth-token", userData.token)
     .expect(200);
+
+  expect(res.body).toMatchObject({
+    username: userData.username,
+    email: userData.email,
+  });
 });
 
 it("Should delete user", async () => {
@@ -97,4 +108,9 @@ it("Should delete user", async () => {
     .delete("/users/delete")
     .set("auth-token", userData1.tokens[0].token)
     .expect(200);
+
+  expect(res.body).toMatchObject({
+    username: userData1.username,
+    email: userData1.email,
+  });
 });
