@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
     const categories = await Category.find();
     res.status(201).send({ categories });
   } catch (err) {
-    res.status(400).send({ err });
+    res.status(404).send({ err });
   }
 });
 
@@ -32,13 +32,13 @@ router.delete("/:id", auth, admin, async (req, res) => {
       _id: req.params.id,
     });
 
-    if (!category) {
-      res.status(404).send();
-    }
+    //if (!category) {
+    //res.status(404).send();
+    //    }
 
-    res.send(category);
-  } catch (e) {
-    res.status(500).send();
+    res.status(200).send(category);
+  } catch (err) {
+    res.status(404).send({ msg: "Category not found" });
   }
 });
 

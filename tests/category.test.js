@@ -19,6 +19,7 @@ const userData1 = {
   ],
 };
 
+let category = {};
 beforeAll(async () => {
   await Category.remove();
   await User.remove();
@@ -42,6 +43,26 @@ it("Should create new category", async () => {
   });
 });
 
+it("Should return all categories", async () => {
+  const res = await request(app).get("/category").expect(201);
+  category = res.body;
+});
+
+it("Should delete category", async () => {
+  const res = await request(app)
+    .delete(`/category/${category.categories[0]._id}`)
+    .set("auth-token", userData1.tokens[0].token)
+    .expect(200);
+});
+
+it("Should not delete category", async () => {
+  const res = await request(app)
+    .delete(`/category/1231241245124`)
+    .set("auth-token", userData1.tokens[0].token)
+    .expect(404);
+  expect(res.body.msg).toBe("Category not found");
+});
+
 it("Should not create new category without admin role", async () => {
   const user = await User.update({ email: userData1.email }, { role: 0 });
   const res = await request(app)
@@ -51,9 +72,6 @@ it("Should not create new category without admin role", async () => {
       name: "Books",
     })
     .expect(401);
-});
 
-it("Should return all categories", async () => {
-  const res = await request(app).get("/category").expect(201);
-  console.log(res.body);
+  expect(res.body.msg).toBe("Access denied");
 });
