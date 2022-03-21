@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 app.use("/users", userRouter);
-app.use("/products", productRouter);
+app.use("/product", productRouter);
 app.use("/category", categoryRouter);
 
 module.exports = app;

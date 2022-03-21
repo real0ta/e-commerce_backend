@@ -9,7 +9,7 @@ const userId1 = new mongoose.Types.ObjectId();
 const userData1 = {
   _id: userId1.toString(),
   username: "john",
-  email: "johnn@mail.com",
+  email: "testt@mail.com",
   password: "john1234john",
   role: 1,
   tokens: [
@@ -21,12 +21,12 @@ const userData1 = {
 
 let category = {};
 beforeAll(async () => {
-  await Category.remove();
-  await User.remove();
   await new User(userData1).save();
 });
 
 afterAll(async () => {
+  await Category.deleteOne({ name: "Music" });
+  await User.deleteOne({ email: userData1.email });
   await await mongoose.disconnect();
 });
 
@@ -35,24 +35,17 @@ it("Should create new category", async () => {
     .post("/category")
     .set("auth-token", userData1.tokens[0].token)
     .send({
-      name: "Books",
+      name: "Music",
     })
     .expect(201);
   expect(res.body).toMatchObject({
-    category: "Books",
+    category: "Music",
   });
 });
 
 it("Should return all categories", async () => {
   const res = await request(app).get("/category").expect(201);
   category = res.body;
-});
-
-it("Should delete category", async () => {
-  const res = await request(app)
-    .delete(`/category/${category.categories[0]._id}`)
-    .set("auth-token", userData1.tokens[0].token)
-    .expect(200);
 });
 
 it("Should not delete category", async () => {
@@ -63,15 +56,22 @@ it("Should not delete category", async () => {
   expect(res.body.msg).toBe("Category not found");
 });
 
+it("Should delete category", async () => {
+  const res = await request(app)
+    .delete(`/category/${category.categories[0]._id}`)
+    .set("auth-token", userData1.tokens[0].token)
+    .expect(200);
+});
+
 it("Should not create new category without admin role", async () => {
-  const user = await User.update({ email: userData1.email }, { role: 0 });
+  const user = await User.updateOne({ email: userData1.email }, { role: 0 });
   const res = await request(app)
     .post("/category")
     .set("auth-token", userData1.tokens[0].token)
     .send({
-      name: "Books",
+      name: "Music",
     })
-    .expect(401);
+    .expect(403);
 
   expect(res.body.msg).toBe("Access denied");
 });

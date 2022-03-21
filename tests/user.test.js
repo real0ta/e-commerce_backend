@@ -17,7 +17,7 @@ const userId1 = new mongoose.Types.ObjectId();
 const userData1 = {
   _id: userId1.toString(),
   username: "john",
-  email: "john@mail.com",
+  email: "usertest@mail.com",
   password: "john1234john",
   tokens: [
     {
@@ -31,7 +31,8 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await User.remove();
+  await User.deleteOne({ email: userData.email });
+  await User.deleteOne({ email: userData1.email });
   await await mongoose.disconnect();
 });
 
@@ -87,7 +88,7 @@ it("Should not sign out user", async () => {
   const res = await request(app)
     .post("/users/logout")
     .set("auth-token", "userData..token")
-    .expect(403);
+    .expect(401);
 });
 
 it("Should log out user", async () => {
