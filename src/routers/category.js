@@ -10,7 +10,6 @@ router.post("/", auth, admin, async (req, res) => {
   try {
     const category = new Category(req.body);
     await category.save();
-    console.log(category);
     res.status(201).send({ category: category.name });
   } catch (err) {
     res.status(400).send({ err });
