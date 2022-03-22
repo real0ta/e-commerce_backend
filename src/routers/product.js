@@ -27,7 +27,6 @@ const upload = multer({
 router.post("/", auth, admin, upload.single("photo"), async (req, res) => {
   try {
     const category = await Category.findOne({ name: req.body.category });
-    if (!category) res.status(500).send();
 
     const product = new Product({
       ...req.body,

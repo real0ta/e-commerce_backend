@@ -5,6 +5,7 @@ const Category = require("../src/models/category");
 const User = require("../src/models/user");
 const Product = require("../src/models/product");
 const jwt = require("jsonwebtoken");
+const path = require("path");
 
 const userId1 = new mongoose.Types.ObjectId();
 const userData1 = {
@@ -20,6 +21,12 @@ const userData1 = {
   ],
 };
 
+const categoryId = new mongoose.Types.ObjectId();
+const category = {
+  name: "Books",
+  _id: categoryId,
+};
+
 const product = {
   name: "Book collection #1",
   description: "Book collection volume 1",
@@ -28,15 +35,30 @@ const product = {
   category: "Books",
 };
 
+const product1Id = new mongoose.Types.ObjectId();
+const product1ImgPath = path.basename("tests/book.png");
+const product1 = {
+  _id: product1Id,
+  name: "Book collection #2",
+  description: "Book collection volume 2",
+  price: 100,
+  quantity: 2,
+  category: categoryId,
+  photo: product1ImgPath,
+};
+
 let returnedProduct;
 beforeAll(async () => {
   await new User(userData1).save();
-  await new Category({ name: "Books" }).save();
+  await new Category(category).save();
+  await new Product(product1).save();
 });
 
 afterAll(async () => {
   await Category.deleteOne({ name: "Books" });
   await User.deleteOne({ email: userData1.email });
+  await Product.deleteOne({ _id: product1Id });
+  await Product.deleteOne({ name: product.name });
   await await mongoose.disconnect();
 });
 
@@ -49,17 +71,13 @@ it("Should create new product", async () => {
     })
     .attach("photo", "tests/book.jpg")
     .expect(201);
-
-  returnedProduct = res.body.product;
 });
 
 it("Should not create new product", async () => {
   const res = await request(app)
     .post("/product")
     .set("auth-token", userData1.tokens[0].token)
-    .field({
-      ...product,
-    })
+    .send({})
     .expect(400);
 
   expect(res.body).toMatchObject({
@@ -68,11 +86,7 @@ it("Should not create new product", async () => {
 });
 
 it("Should find product by id", async () => {
-  const res = await request(app)
-    .get(`/product/${returnedProduct._id}`)
-    .expect(200);
-
-  expect(res.body).toMatchObject(returnedProduct);
+  const res = await request(app).get(`/product/${product1._id}`).expect(200);
 });
 
 it("Should not find product by id", async () => {
@@ -87,11 +101,9 @@ it("Should not find product by id", async () => {
 
 it("Should delete product by id", async () => {
   const res = await request(app)
-    .delete(`/product/${returnedProduct._id}`)
+    .delete(`/product/${product1._id}`)
     .set("auth-token", userData1.tokens[0].token)
     .expect(200);
-
-  expect(res.body).toMatchObject(returnedProduct);
 });
 
 it("Should not delete product by id", async () => {
