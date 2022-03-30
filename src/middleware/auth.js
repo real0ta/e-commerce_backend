@@ -3,8 +3,10 @@ const User = require("../models/user");
 
 const auth = async (req, res, next) => {
   try {
-    const token = req.header("auth-token").replace("Bearer ", "");
+    const token = req.header("Authentication").replace("Bearer ", "");
+    console.log(token);
     const verified = jwt.verify(token, process.env.JWT_KEY);
+    console.log(verified);
     const user = await User.findOne({
       _id: verified._id,
       "tokens.token": token,
