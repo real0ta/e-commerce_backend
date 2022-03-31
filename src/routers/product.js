@@ -27,14 +27,19 @@ const upload = multer({
 router.post("/", auth, admin, upload.single("photo"), async (req, res) => {
   try {
     const category = await Category.findOne({ name: req.body.category });
-
+    console.log(category);
     const product = new Product({
       ...req.body,
-      category: category,
+      category: category._id,
       photo: req.file.buffer,
     });
+
     await product.save();
-    res.status(201).send({ product });
+    res.status(201).send({
+      name: product.name,
+      category: product.category,
+      price: product.price,
+    });
   } catch (err) {
     res.status(400).send({ msg: "Could not create product" });
   }
@@ -43,7 +48,7 @@ router.post("/", auth, admin, upload.single("photo"), async (req, res) => {
 // Get all products
 router.get("/", async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find({});
     res.status(201).send({ products });
   } catch (err) {
     res.status(404).send({ err });

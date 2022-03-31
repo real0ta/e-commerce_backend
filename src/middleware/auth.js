@@ -9,7 +9,6 @@ const auth = async (req, res, next) => {
     console.log(verified);
     const user = await User.findOne({
       _id: verified._id,
-      "tokens.token": token,
     });
 
     if (!user) {

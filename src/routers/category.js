@@ -1,5 +1,6 @@
 const express = require("express");
 const Category = require("../models/category");
+const Product = require("../models/product");
 
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
@@ -38,6 +39,19 @@ router.delete("/:id", auth, admin, async (req, res) => {
     res.status(200).send(category);
   } catch (err) {
     res.status(404).send({ msg: "Category not found" });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    const category = await Category.findById(req.params.id);
+    if (!category) throw new Error("Category does not exist!");
+
+    const products = await Product.find({ category: req.params.id });
+    console.log(products);
+    res.status(200).send(products);
+  } catch (err) {
+    res.status(400).send(err);
   }
 });
 

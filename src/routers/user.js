@@ -5,12 +5,12 @@ const auth = require("../middleware/auth");
 
 const router = new express.Router();
 
-const generateAccessToken = () => {
+const generateAccessToken = (user) => {
   return jwt.sign(
     { _id: user.id.toString(), role: user.role },
     process.env.JWT_KEY,
     {
-      expiresIn: "2h",
+      expiresIn: "1h",
     }
   );
 };
@@ -36,7 +36,7 @@ router.post("/login", async (req, res) => {
     process.env.JWT_KEY
   );
 
-  const accessToken = generateAccessToken();
+  const accessToken = generateAccessToken(user);
   user.tokens = user.tokens.concat({ token });
 
   await user.save();
@@ -56,7 +56,7 @@ router.post("/refresh", async (req, res) => {
   const user = User.findOne({ _id: verified._id, "tokens.token": token });
 
   if (!user) res.status(401).json("error");
-  const accessToken = generateAccessToken();
+  const accessToken = generateAccessToken(user);
   res.status(200).send({ accessToken });
   a;
 });
