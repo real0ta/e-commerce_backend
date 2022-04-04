@@ -12,5 +12,6 @@ app.use(bodyParser.json());
 app.use("/users", userRouter);
 app.use("/product", productRouter);
 app.use("/category", categoryRouter);
+app.use(express.static("images"));
 
 module.exports = app;

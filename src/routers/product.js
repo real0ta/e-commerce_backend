@@ -11,7 +11,17 @@ const admin = require("../middleware/admin");
 
 const router = new express.Router();
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./images/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, new Date().toISOString() + file.originalname);
+  },
+});
+
 const upload = multer({
+  storage,
   limits: {
     fileSize: 1000000,
   },
@@ -27,11 +37,12 @@ const upload = multer({
 router.post("/", auth, admin, upload.single("photo"), async (req, res) => {
   try {
     const category = await Category.findOne({ name: req.body.category });
-    console.log(category);
+
     const product = new Product({
       ...req.body,
+      categoryName: category.name,
       category: category._id,
-      photo: req.file.buffer,
+      photo: req.file.filename,
     });
 
     await product.save();
@@ -41,7 +52,7 @@ router.post("/", auth, admin, upload.single("photo"), async (req, res) => {
       price: product.price,
     });
   } catch (err) {
-    res.status(400).send({ msg: "Could not create product" });
+    res.status(400).send({ err });
   }
 });
 

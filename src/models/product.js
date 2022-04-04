@@ -19,14 +19,18 @@ const ProductSchema = new Schema({
     type: Number,
     default: 1,
   },
+  categoryName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   category: {
     type: Schema.Types.ObjectId,
     ref: "Category",
     required: true,
   },
   photo: {
-    type: Buffer,
-    required: true,
+    type: String,
   },
 });
 
