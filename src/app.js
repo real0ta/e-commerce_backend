@@ -19,7 +19,7 @@ app.use(allowCrossDomain);
 
 app.use(express.json());
 app.use(bodyParser.json());
-app.use("/users", userRouter);
+app.use("/user", userRouter);
 app.use("/product", productRouter);
 app.use("/category", categoryRouter);
 app.use(express.static("images"));

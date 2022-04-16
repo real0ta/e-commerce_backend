@@ -19,9 +19,10 @@ router.post("/", async (req, res) => {
   const user = new User(req.body);
   try {
     await user.save();
-    res.status(201).send();
+    res.status(201).send("Account registered");
+          
   } catch (e) {
-    res.status(402).send("Registration failed");
+    res.status(404).send("Registration failed");
   }
 });
 

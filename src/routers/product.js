@@ -66,18 +66,19 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get product by id
-router.get("/:id", async (req, res) => {
+// Get product by name
+router.get("/:name", async (req, res) => {
   try {
-    const product = await Product.findOne({ _id: req.params.id });
-    const category = await Category.findOne({ _id: product.category });
-    product.category = category;
-    res.status(200).send(product);
+    const product = await Product.find({
+      name: new RegExp(req.params.name, "i"),
+    });
+    res.status(201).send(product);
   } catch (err) {
     res.status(404).send({ msg: "Could not find product" });
   }
 });
 
+// Get product by name
 //delete product by id
 router.delete("/:id", auth, admin, async (req, res) => {
   try {
