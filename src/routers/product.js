@@ -56,10 +56,16 @@ router.post("/", auth, admin, upload.single("photo"), async (req, res) => {
   }
 });
 
-// Get all products
+// Get all products or by name
 router.get("/", async (req, res) => {
+  let products;
   try {
-    const products = await Product.find({});
+    if (req.query.name) {
+      console.log(req.query.name);
+      products = await Product.find({ name: new RegExp(req.query.name, "i") });
+    } else {
+      products = await Product.find({});
+    }
     res.status(201).send({ products });
   } catch (err) {
     res.status(404).send({ err });
@@ -67,10 +73,10 @@ router.get("/", async (req, res) => {
 });
 
 // Get product by name
-router.get("/:name", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const product = await Product.find({
-      name: new RegExp(req.params.name, "i"),
+      _id: req.params.id,
     });
     res.status(201).send(product);
   } catch (err) {
