@@ -24,7 +24,7 @@ afterAll(async () => {
 it("Should create new product", async () => {
   const res = await request(app)
     .post("/product")
-    .set("auth-token", userTwo.tokens[0].token)
+    .set("Authentication", userTwo.tokens[0].token)
     .field({
       ...productOne,
     })
@@ -35,13 +35,9 @@ it("Should create new product", async () => {
 it("Should not create new product", async () => {
   const res = await request(app)
     .post("/product")
-    .set("auth-token", userTwo.tokens[0].token)
+    .set("Authentication", userTwo.tokens[0].token)
     .send({})
     .expect(400);
-
-  expect(res.body).toMatchObject({
-    msg: "Could not create product",
-  });
 });
 
 it("Should find product by id", async () => {
@@ -61,14 +57,14 @@ it("Should not find product by id", async () => {
 it("Should delete product by id", async () => {
   const res = await request(app)
     .delete(`/product/${productTwo._id}`)
-    .set("auth-token", userTwo.tokens[0].token)
+    .set("Authentication", userTwo.tokens[0].token)
     .expect(200);
 });
 
 it("Should not delete product by id", async () => {
   const res = await request(app)
     .delete(`/product/returnedProduct._id}`)
-    .set("auth-token", userTwo.tokens[0].token)
+    .set("Authentication", userTwo.tokens[0].token)
     .expect(400);
 
   expect(res.body).toMatchObject({

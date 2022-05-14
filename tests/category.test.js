@@ -20,7 +20,7 @@ afterAll(async () => {
 it("Should create new category", async () => {
   const res = await request(app)
     .post("/category")
-    .set("auth-token", userOne.tokens[0].token)
+    .set("Authentication", userOne.tokens[0].token)
     .send({
       name: "Music",
     })
@@ -38,7 +38,7 @@ it("Should return all categories", async () => {
 it("Should not delete category", async () => {
   const res = await request(app)
     .delete(`/category/1231241245124`)
-    .set("auth-token", userOne.tokens[0].token)
+    .set("Authentication", userOne.tokens[0].token)
     .expect(404);
   expect(res.body.msg).toBe("Category not found");
 });
@@ -46,7 +46,7 @@ it("Should not delete category", async () => {
 it("Should delete category", async () => {
   const res = await request(app)
     .delete(`/category/${category.categories[0]._id}`)
-    .set("auth-token", userOne.tokens[0].token)
+    .set("Authentication", userOne.tokens[0].token)
     .expect(200);
 });
 
@@ -54,7 +54,7 @@ it("Should not create new category without admin role", async () => {
   const user = await User.updateOne({ email: userOne.email }, { role: 0 });
   const res = await request(app)
     .post("/category")
-    .set("auth-token", userOne.tokens[0].token)
+    .set("Authentication", userOne.tokens[0].token)
     .send({
       name: "Music",
     })
