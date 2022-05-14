@@ -5,9 +5,9 @@ const auth = require("../middleware/auth");
 
 const router = new express.Router();
 
-const generateAccessToken = (user) => {
+const generateAccessToken = (id, role) => {
   return jwt.sign(
-    { _id: user.id.toString(), role: user.role },
+    { _id: id.toString(), role: role },
     process.env.JWT_KEY,
     {
       expiresIn: "1h",
@@ -20,7 +20,6 @@ router.post("/", async (req, res) => {
   try {
     await user.save();
     res.status(201).send("Account registered");
-          
   } catch (e) {
     res.status(404).send("Registration failed");
   }
@@ -34,10 +33,10 @@ router.post("/login", async (req, res) => {
 
   const token = jwt.sign(
     { _id: user._id.toString(), name: user.username },
-    process.env.JWT_KEY
+    process.env.JWT_REFRESH_KEY
   );
 
-  const accessToken = generateAccessToken(user);
+  const accessToken = generateAccessToken(user._id, user.role);
   user.tokens = user.tokens.concat({ token });
 
   await user.save();
@@ -50,16 +49,13 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/refresh", async (req, res) => {
-  const refreshToken = res.body.token;
+  const refreshToken = req.body.token;
   if (!refreshToken) res.send(400).send();
-
   const verified = jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY);
-  const user = User.findOne({ _id: verified._id, "tokens.token": token });
-
+  const user =  await User.findById(verified._id)
   if (!user) res.status(401).json("error");
-  const accessToken = generateAccessToken(user);
+  const accessToken = generateAccessToken(user._id, user.role);
   res.status(200).send({ accessToken });
-  a;
 });
 
 router.post("/logout", auth, async (req, res) => {
@@ -69,9 +65,7 @@ router.post("/logout", auth, async (req, res) => {
     });
     await req.user.save();
 
-    res
-      .status(200)
-      .send({ username: req.user.username, email: req.user.email });
+    res.status(200);
   } catch (e) {
     res.status(500).send();
   }

@@ -7,7 +7,7 @@ const userOne = {
   username: "userOne",
   email: "userOne@mail.com",
   password: "userOneuserOne",
-  role: 1,
+  role: "Admin",
   tokens: [
     {
       token: jwt.sign({ _id: userOneId.toString() }, process.env.JWT_KEY),
@@ -35,7 +35,7 @@ const userThree = {
   username: "userThree",
   email: "userThree@mail.com",
   password: "userThreeuserThree",
-  token: "",
+  token: ""
 };
 
 const userFourId = new mongoose.Types.ObjectId();
@@ -57,24 +57,27 @@ const category = {
   _id: categoryId,
 };
 
+const productImgPath = path.basename("tests/book.png");
 const productOne = {
   name: "Book collection #1",
   description: "Book collection volume 1",
   price: 200,
   quantity: 5,
-  category: "Books",
+  categoryName: "Books",
+  category: categoryId.toString(),
+  photo: productImgPath,
 };
 
 const productTwoId = new mongoose.Types.ObjectId();
-const productTwoImgPath = path.basename("tests/book.png");
 const productTwo = {
   _id: productTwoId,
   name: "Book collection #2",
   description: "Book collection volume 2",
   price: 100,
   quantity: 2,
+  categoryName: "Books",
   category: categoryId,
-  photo: productTwoImgPath,
+  photo: productImgPath,
 };
 
 module.exports = {

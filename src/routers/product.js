@@ -34,10 +34,10 @@ const upload = multer({
   },
 });
 
-router.post("/", auth, admin, upload.single("photo"), async (req, res) => {
+router.post("/",  upload.single("photo"), async (req, res) => {
   try {
-    const category = await Category.findOne({ name: req.body.category });
-
+    const category = await Category.findOne({ _id: req.body.category });
+    console.log(req.file)
     const product = new Product({
       ...req.body,
       categoryName: category.name,
@@ -63,6 +63,7 @@ router.get("/", async (req, res) => {
     if (req.query.name) {
       console.log(req.query.name);
       products = await Product.find({ name: new RegExp(req.query.name, "i") });
+      if(products.length === 0) throw new Error()
     } else {
       products = await Product.find({});
     }
@@ -78,7 +79,7 @@ router.get("/:id", async (req, res) => {
     const product = await Product.find({
       _id: req.params.id,
     });
-    res.status(201).send(product);
+    res.status(200).send(product);
   } catch (err) {
     res.status(404).send({ msg: "Could not find product" });
   }
@@ -86,7 +87,7 @@ router.get("/:id", async (req, res) => {
 
 // Get product by name
 //delete product by id
-router.delete("/:id", auth, admin, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const product = await Product.findOneAndDelete({ _id: req.params.id });
     const category = await Category.findOne({ _id: product.category });

@@ -4,9 +4,11 @@ const stripe = Stripe(process.env.STRIPE_KEY)
 const router = new express.Router();
 
 router.post("/",  async (req, res) => {
-  console.log(process.env.STRIPE_KEY)
-  const { amount, id } = req.body;
-  console.log("stripe-routes.js 10 | amount and id", amount, id);
+  const {items ,  id } = req.body;
+
+  let amount = 0;
+  items.forEach(item => amount += item.price * item.amount)
+
   try {
     const payment = await stripe.paymentIntents.create({
       amount: amount,
@@ -14,6 +16,7 @@ router.post("/",  async (req, res) => {
       description: "Your Company Description",
       payment_method: id,
       confirm: true,
+
     });
     console.log("stripe-routes.js 19 | payment", payment);
     res.status(200).send({
