@@ -44,6 +44,7 @@ const userSchema = new Schema({
     },
   ],
 });
+
 userSchema.statics.findAndCompareUser = async (email, password) => {
   try {
     const user = await User.findOne({ email });
