@@ -1,11 +1,13 @@
 const express = require("express");
 const Category = require("../models/category");
 const Product = require("../models/product");
-
+const mongoose = require('mongoose')
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
 
 const router = new express.Router();
+
+
 
 router.post("/", auth, admin, async (req, res) => {
   try {
@@ -44,15 +46,12 @@ router.delete("/:id", auth, admin, async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const category = await Category.findById(req.params.id);
-    if (!category) throw new Error("Category does not exist!");
-
-    const products = await Product.find({ category: req.params.id });
-    console.log(products);
-    res.status(200).send(products);
-  } catch (err) {
-    res.status(400).send(err);
+  const products = await Category.findById(req.params.id).populate('products')
+    res.status(200).send(products.products)
+  } catch(er) {
+    res.status(404).send()
   }
+
 });
 
 module.exports = router;

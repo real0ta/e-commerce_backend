@@ -34,7 +34,7 @@ const upload = multer({
   },
 });
 
-router.post("/",  upload.single("photo"), async (req, res) => {
+router.post("/", auth, admin, upload.single("photo"), async (req, res) => {
   try {
     const category = await Category.findOne({ _id: req.body.category });
     console.log(req.file)
@@ -85,9 +85,8 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Get product by name
 //delete product by id
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, admin, async (req, res) => {
   try {
     const product = await Product.findOneAndDelete({ _id: req.params.id });
     const category = await Category.findOne({ _id: product.category });
