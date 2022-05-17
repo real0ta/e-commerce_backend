@@ -1,13 +1,11 @@
 const express = require("express");
 const Category = require("../models/category");
 const Product = require("../models/product");
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
 
 const router = new express.Router();
-
-
 
 router.post("/", auth, admin, async (req, res) => {
   try {
@@ -30,15 +28,11 @@ router.get("/", async (req, res) => {
 
 router.delete("/:id", auth, admin, async (req, res) => {
   try {
-    const category = await Category.findOneAndDelete({
+    await Category.findOneAndDelete({
       _id: req.params.id,
     });
-
-    //if (!category) {
-    //res.status(404).send();
-    //    }
-
-    res.status(200).send(category);
+    await Product.deleteMany({ category: req.params.id });
+    res.status(200).send();
   } catch (err) {
     res.status(404).send({ msg: "Category not found" });
   }
@@ -46,12 +40,13 @@ router.delete("/:id", auth, admin, async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-  const products = await Category.findById(req.params.id).populate('products')
-    res.status(200).send(products.products)
-  } catch(er) {
-    res.status(404).send()
+    const products = await Category.findById(req.params.id).populate(
+      "products"
+    );
+    res.status(200).send(products.products);
+  } catch (er) {
+    res.status(404).send();
   }
-
 });
 
 module.exports = router;
