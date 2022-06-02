@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "env-cmd -f ./config/dev.env nodemon ./src/index.js",
+    "start": "env-cmd -f ./config/dev.env nodemon ./src/index.js",
     "test": "env-cmd -f ./config/test.env jest "
   },
   "jest": {
@@ -31,5 +31,8 @@
     "jest": "^27.5.1",
     "nodemon": "^2.0.14",
     "supertest": "^6.2.2"
+  },
+  "engines": {
+    "node": "14.3.0"
   }
 }
