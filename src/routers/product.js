@@ -21,7 +21,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({
-  storage,
   limits: {
     fileSize: 1000000,
   },
@@ -37,12 +36,11 @@ const upload = multer({
 router.post("/", auth, admin, upload.single("photo"), async (req, res) => {
   try {
     const category = await Category.findOne({ _id: req.body.category });
-    console.log(req.file)
     const product = new Product({
       ...req.body,
       categoryName: category.name,
       category: category._id,
-      photo: req.file.filename,
+      image: req.file.buffer,
     });
 
     await product.save();
@@ -63,7 +61,7 @@ router.get("/", async (req, res) => {
     if (req.query.name) {
       console.log(req.query.name);
       products = await Product.find({ name: new RegExp(req.query.name, "i") });
-      if(products.length === 0) throw new Error()
+      if (products.length === 0) throw new Error();
     } else {
       products = await Product.find({});
     }
