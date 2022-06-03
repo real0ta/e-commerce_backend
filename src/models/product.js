@@ -29,8 +29,8 @@ const ProductSchema = new Schema({
     ref: "Category",
     required: true,
   },
-  photo: {
-    type: String,
+  image: {
+    type: "Buffer",
   },
 });
 
