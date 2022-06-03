@@ -10,6 +10,7 @@ require("./db/mongoose");
 const app = express();
 
 app.use(cors());
+app.options("*", cors());
 app.use(express.json());
 app.use(bodyParser.json());
 app.use("/user", userRouter);
