@@ -9,9 +9,13 @@ npm install
 ```
 3. Create .env file in config directory and add the following environment variable
 `JWT_KEY `
+
 `JWT_REFRESH_KEY`
+
 `PORT`
+
 `STRIPE_KEY`
+
 `URL` mongodb url
 5. run 
 ```bash 
