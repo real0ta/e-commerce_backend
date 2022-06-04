@@ -4,11 +4,11 @@ const mongoose = require("mongoose");
 const Category = require("../src/models/category");
 const User = require("../src/models/user");
 const Product = require("../src/models/product");
-const jwt = require("jsonwebtoken");
 const { userTwo, category, productOne, productTwo } = require("./data");
 
 beforeAll(async () => {
   await new User(userTwo).save();
+  await User.findOneAndUpdate({ email: userTwo.email }, { role: "Admin" });
   await new Category(category).save();
   await new Product(productTwo).save();
 });
@@ -18,13 +18,13 @@ afterAll(async () => {
   await User.deleteOne({ email: userTwo.email });
   await Product.deleteOne({ _id: productTwo._id });
   await Product.deleteOne({ name: productOne.name });
-  await await mongoose.disconnect();
+  await mongoose.disconnect();
 });
 
 it("Should create new product", async () => {
   const res = await request(app)
     .post("/product")
-    .set("Authentication", userTwo.tokens[0].token)
+    .set("Authentication", userTwo.token)
     .field({
       ...productOne,
     })
@@ -35,7 +35,7 @@ it("Should create new product", async () => {
 it("Should not create new product", async () => {
   const res = await request(app)
     .post("/product")
-    .set("Authentication", userTwo.tokens[0].token)
+    .set("Authentication", userTwo.token)
     .send({})
     .expect(400);
 });
@@ -57,14 +57,14 @@ it("Should not find product by id", async () => {
 it("Should delete product by id", async () => {
   const res = await request(app)
     .delete(`/product/${productTwo._id}`)
-    .set("Authentication", userTwo.tokens[0].token)
+    .set("Authentication", userTwo.token)
     .expect(200);
 });
 
 it("Should not delete product by id", async () => {
   const res = await request(app)
     .delete(`/product/returnedProduct._id}`)
-    .set("Authentication", userTwo.tokens[0].token)
+    .set("Authentication", userTwo.token)
     .expect(400);
 
   expect(res.body).toMatchObject({

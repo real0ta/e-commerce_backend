@@ -22,11 +22,7 @@ const userTwo = {
   email: "userTwo@mail.com",
   password: "userTwo",
   role: 1,
-  tokens: [
-    {
-      token: jwt.sign({ _id: userTwoId.toString() }, process.env.JWT_KEY),
-    },
-  ],
+  token: jwt.sign({ _id: userTwoId.toString() }, process.env.JWT_KEY),
 };
 
 const userTheeId = new mongoose.Types.ObjectId();
@@ -35,7 +31,7 @@ const userThree = {
   username: "userThree",
   email: "userThree@mail.com",
   password: "userThreeuserThree",
-  token: ""
+  token: "",
 };
 
 const userFourId = new mongoose.Types.ObjectId();

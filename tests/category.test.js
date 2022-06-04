@@ -14,7 +14,7 @@ beforeAll(async () => {
 afterAll(async () => {
   await Category.deleteOne({ name: "Music" });
   await User.deleteOne({ email: userOne.email });
-  await await mongoose.disconnect();
+  await mongoose.disconnect();
 });
 
 it("Should create new category", async () => {

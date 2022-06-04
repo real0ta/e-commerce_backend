@@ -35,14 +35,6 @@ const userSchema = new Schema({
       }
     },
   },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
 });
 
 userSchema.statics.findAndCompareUser = async (email, password) => {

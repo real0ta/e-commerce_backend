@@ -10,7 +10,7 @@ beforeAll(async () => {
 afterAll(async () => {
   await User.deleteOne({ email: userFour.email });
   await User.deleteOne({ email: userThree.email });
-  await await mongoose.disconnect();
+  await mongoose.disconnect();
 });
 
 it("Should sign up new user", async () => {
